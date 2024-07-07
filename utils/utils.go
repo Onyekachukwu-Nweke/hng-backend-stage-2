@@ -82,6 +82,15 @@ func RespondWithValidationError(w http.ResponseWriter, err error) {
 	RespondWithJSON(w, http.StatusUnprocessableEntity, response)
 }
 
+func RespondWithError(w http.ResponseWriter, status int, statusText, message string, statusCode int) {
+	response := map[string]interface{}{
+		"status":     statusText,
+		"message":    message,
+		"statusCode": statusCode,
+	}
+	RespondWithJSON(w, status, response)
+}
+
 func RespondWithJSON(w http.ResponseWriter, status int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 	w.Header().Set("Content-Type", "application/json")

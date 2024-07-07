@@ -13,6 +13,7 @@ import (
 type UserService interface {
 	Register(user *models.User) (*models.User, error)
 	Login(email, password string) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
 }
 
 type userService struct {
@@ -62,4 +63,8 @@ func (s *userService) Login(email, password string) (*models.User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *userService) GetUserByEmail(email string) (*models.User, error) {
+	return s.userRepo.FindByEmail(email)
 }

@@ -46,6 +46,11 @@ func NewHandler() *Handler {
 	// Initialize router
 	router := mux.NewRouter()
 
+	// Dummy Routes
+	router.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello World")
+	})
+
 	// Auth routes
 	router.HandleFunc("/auth/register", authHandler.Register).Methods("POST")
 	router.HandleFunc("/auth/login", authHandler.Login).Methods("POST")

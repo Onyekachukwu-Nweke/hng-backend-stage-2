@@ -23,7 +23,7 @@ func NewAuthHandler(userService services.UserService) *AuthHandler {
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		utils.RespondWithError(w, http.StatusBadRequest, "Bad request", "Invalid request payload", 400)
 		return
 	}
 
@@ -33,10 +33,17 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if email already exists
+	existingUser, _ := h.userService.GetUserByEmail(user.Email)
+	if existingUser != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Bad request", "Email already exists", 400)
+		return
+	}
+
 	// Register user
 	createdUser, err := h.userService.Register(&user)
 	if err != nil {
-		http.Error(w, "Registration unsuccessful", http.StatusInternalServerError)
+		utils.RespondWithError(w, http.StatusBadRequest, "Bad request", "Registration unsuccessful", 400)
 		return
 	}
 
