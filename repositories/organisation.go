@@ -10,6 +10,8 @@ type OrganisationRepository interface {
 	Create(org *models.Organisation) error
 	FindByID(id string) (*models.Organisation, error)
 	FindByUser(userID string) ([]models.Organisation, error)
+	FindUserByID(userID string) (*models.User, error)
+	AddUserToOrganisation(orgID, userID string) error
 }
 
 type organisationRepository struct {
@@ -34,4 +36,15 @@ func (r *organisationRepository) FindByUser(userID string) ([]models.Organisatio
 	var orgs []models.Organisation
 	err := r.db.Model(&models.User{UserID: userID}).Association("Organisations").Find(&orgs)
 	return orgs, err
+}
+
+func (r *organisationRepository) FindUserByID(userID string) (*models.User, error) {
+	var user models.User
+	err := r.db.Where("user_id = ?", userID).First(&user).Error
+	return &user, err
+}
+
+
+func (r *organisationRepository) AddUserToOrganisation(orgID, userID string) error {
+	return r.db.Exec("INSERT INTO Organisations (user_id, org_id) VALUES (?, ?)", userID, orgID).Error
 }

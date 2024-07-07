@@ -53,6 +53,15 @@ func ValidateJWT(tokenString string) (*Claims, error) {
 	return claims, nil
 }
 
+func ValidateJWTFromRequest(r *http.Request) (*Claims, error) {
+	tokenString := r.Header.Get("Authorization")
+	if tokenString == "" {
+		return nil, errors.New("missing or invalid token")
+	}
+
+	return ValidateJWT(tokenString)
+}
+
 type ErrorResponse struct {
 	Field   string `json:"field"`
 	Message string `json:"message"`
